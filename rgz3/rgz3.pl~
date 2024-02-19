@@ -1,0 +1,85 @@
+:- dynamic toy/2. % Определяем динамический предикат для хранения игрушек в базе данных
+
+% Меню программы
+menu :-
+    writeln('Меню:'),
+    writeln('1. Просмотр содержимого базы данных'),
+    writeln('2. Добавление записи'),
+    writeln('3. Удаление записи'),
+    writeln('4. Выполнение запроса'),
+    writeln('5. Выход из программы'),
+    flush_output,
+    write('Выберите действие: '),
+    flush_output,
+    read(Choice),
+    choice(Choice).
+
+% Обработка выбора пользователя
+choice(1) :- view_database, menu.
+choice(2) :- add_record, menu.
+choice(3) :- delete_record, menu.
+choice(4) :- query_database, menu.
+choice(5) :- save_and_exit.
+
+% Просмотр содержимого базы данных
+view_database :-
+    findall(Toy, toy(Toy), Toys),
+    writeln('Содержимое базы данных:'),
+    print_toys(Toys).
+
+% Добавление записи
+add_record :-
+    writeln('Введите название игрушки: '),
+    flush_output,
+    read_string(N),
+    writeln('Введите стоимость игрушки: '),
+    flush_output,
+    read(C),
+    assertz(toy(N, C)),
+    writeln('Запись добавлена успешно!'),
+    flush_output.
+
+% Удаление записи
+delete_record :-
+    writeln('Введите название игрушки для удаления: '),
+    flush_output,
+    read_string(N),
+    retract(toy(N, _)),
+    writeln('Запись удалена успешно!'),
+    flush_output.
+
+% Выполнение запроса
+query_database :-
+    findall(Price, toy(_, Price), Prices),
+    min_list(Prices, MinPrice),
+    findall(Name, (toy(Name, Price), Price =< MinPrice + 100), Toys),
+    writeln('Наиболее дешевые игрушки:'),
+    flush_output,
+    print_toys(Toys).
+
+% Сохранение и выход из программы
+save_and_exit :-
+    tell('C:/VUZ/FLP/rgz3/database.txt'), % Открываем файл базы данных для записи
+    listing(toy), % Записываем содержимое базы данных в файл
+    told, % Закрываем файл базы данных
+    writeln('Содержимое базы данных сохранено в файле database.txt'),
+    halt. % Завершаем выполнение программы
+
+% Печать списка игрушек
+print_toys([]) :-
+    writeln('').
+print_toys([Toy|Toys]) :-
+    writeln(Toy),
+    print_toys(Toys).
+
+% Вспомогательный предикат для чтения строк с пробелами
+read_string(String) :-
+    read_line_to_string(user_input, String).
+
+% Главный предикат
+mainp :-
+    retractall(toy(_, _)), % Очищаем базу данных перед началом работы
+    consult('C:/VUZ/FLP/rgz3/database.txt'), % Загружаем начальное состояние базы данных из файла
+    menu.
+
+:- mainp. % Запускаем программу
