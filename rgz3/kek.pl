@@ -1,84 +1,84 @@
 :- dynamic(toy/2).
 
-% Загрузка базы данных из файла
+% Р—Р°РіСЂСѓР·РєР° Р±Р°Р·С‹ РґР°РЅРЅС‹С… РёР· С„Р°Р№Р»Р°
 load_database(File) :-
     consult(File).
 
-% Сохранение базы данных в файл
+% РЎРѕС…СЂР°РЅРµРЅРёРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РІ С„Р°Р№Р»
 save_database(File) :-
     tell(File),
     listing(toy/2),
     told.
 
-% просмотр содержимого базы данных
+% РїСЂРѕСЃРјРѕС‚СЂ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ Р±Р°Р·С‹ РґР°РЅРЅС‹С…
 view_database :-
     toy(Name, Price),
-    format('~w: ~w руб.~n', [Name, Price]),
+    format('~w: ~w СЂСѓР±.~n', [Name, Price]),
     fail.
 view_database.
 
-% добавление записи
+% РґРѕР±Р°РІР»РµРЅРёРµ Р·Р°РїРёСЃРё
 add_toy :-
-    write('Введите название игрушки: '),
+    write('Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РёРіСЂСѓС€РєРё: '),
     read_line_to_string(user_input, Name),
-    write('Введите стоимость игрушки: '),
+    write('Р’РІРµРґРёС‚Рµ СЃС‚РѕРёРјРѕСЃС‚СЊ РёРіСЂСѓС€РєРё: '),
     read_line_to_codes(user_input, PriceCodes),
     number_codes(Price, PriceCodes),
     assertz(toy(Name, Price)),
-    writeln('Запись добавлена в базу данных.').
+    writeln('Р—Р°РїРёСЃСЊ РґРѕР±Р°РІР»РµРЅР° РІ Р±Р°Р·Сѓ РґР°РЅРЅС‹С….').
 
-% удаление записи
+% СѓРґР°Р»РµРЅРёРµ Р·Р°РїРёСЃРё
 delete_toy :-
-    write('Введите название игрушки для удаления: '),
+    write('Р’РІРµРґРёС‚Рµ РЅР°Р·РІР°РЅРёРµ РёРіСЂСѓС€РєРё РґР»СЏ СѓРґР°Р»РµРЅРёСЏ: '),
     read_line_to_string(user_input, Name),
     retract(toy(Name, _)),
-    writeln('Запись удалена из базы данных.').
+    writeln('Р—Р°РїРёСЃСЊ СѓРґР°Р»РµРЅР° РёР· Р±Р°Р·С‹ РґР°РЅРЅС‹С….').
 
-% выполнение запроса к базе данных
+% РІС‹РїРѕР»РЅРµРЅРёРµ Р·Р°РїСЂРѕСЃР° Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С…
 query :-
     findall(Price, toy(_, Price), Prices),
     min_list(Prices, MinPrice),
     MaxDiff is 100,
     findall(Name, (toy(Name, Price), Price =< MinPrice + MaxDiff), CheapestToys),
-    write('Наиболее дешевые игрушки: '), nl,
+    write('РќР°РёР±РѕР»РµРµ РґРµС€РµРІС‹Рµ РёРіСЂСѓС€РєРё: '), nl,
     print_list(CheapestToys).
 
-% главное меню программы
+% РіР»Р°РІРЅРѕРµ РјРµРЅСЋ РїСЂРѕРіСЂР°РјРјС‹
 menu :-
     repeat,
-    writeln('1. Просмотреть содержимое базы данных.'),
-    writeln('2. Добавить запись.'),
-    writeln('3. Удалить запись.'),
-    writeln('4. Выполнить запрос к базе данных.'),
-    writeln('5. Выйти.'),
-    writeln('Выберите пункт меню: '),
+    writeln('1. РџСЂРѕСЃРјРѕС‚СЂРµС‚СЊ СЃРѕРґРµСЂР¶РёРјРѕРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С….'),
+    writeln('2. Р”РѕР±Р°РІРёС‚СЊ Р·Р°РїРёСЃСЊ.'),
+    writeln('3. РЈРґР°Р»РёС‚СЊ Р·Р°РїРёСЃСЊ.'),
+    writeln('4. Р’С‹РїРѕР»РЅРёС‚СЊ Р·Р°РїСЂРѕСЃ Рє Р±Р°Р·Рµ РґР°РЅРЅС‹С….'),
+    writeln('5. Р’С‹Р№С‚Рё.'),
+    writeln('Р’С‹Р±РµСЂРёС‚Рµ РїСѓРЅРєС‚ РјРµРЅСЋ: '),
     read_number(Choice),
     process_choice(Choice).
 
-% чтение числа из входного потока
+% С‡С‚РµРЅРёРµ С‡РёСЃР»Р° РёР· РІС…РѕРґРЅРѕРіРѕ РїРѕС‚РѕРєР°
 read_number(Number) :-
     read_line_to_codes(user_input, Codes),
     number_codes(Number, Codes).
 
-% обработка выбора пользователя
+% РѕР±СЂР°Р±РѕС‚РєР° РІС‹Р±РѕСЂР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 process_choice(1) :- view_database, menu.
 process_choice(2) :- add_toy, menu.
 process_choice(3) :- delete_toy, menu.
 process_choice(4) :- query, menu.
-process_choice(5) :- writeln('Программа завершена.'), save_database('C:/VUZ/FLP/rgz3/toys_db.pl').
-process_choice(_) :- writeln('Некорректный выбор. Попробуйте снова.'), menu.
+process_choice(5) :- writeln('РџСЂРѕРіСЂР°РјРјР° Р·Р°РІРµСЂС€РµРЅР°.'), save_database('C:/VUZ/FLP/rgz3/toys_db.pl').
+process_choice(_) :- writeln('РќРµРєРѕСЂСЂРµРєС‚РЅС‹Р№ РІС‹Р±РѕСЂ. РџРѕРїСЂРѕР±СѓР№С‚Рµ СЃРЅРѕРІР°.'), menu.
 
-% Печать списка
+% РџРµС‡Р°С‚СЊ СЃРїРёСЃРєР°
 print_list([]).
 print_list([X|Xs]) :-
     write(X), nl,
     print_list(Xs).
 
 
-% Загрузка базы данных и запуск главного меню
+% Р—Р°РіСЂСѓР·РєР° Р±Р°Р·С‹ РґР°РЅРЅС‹С… Рё Р·Р°РїСѓСЃРє РіР»Р°РІРЅРѕРіРѕ РјРµРЅСЋ
 mainp :-
     load_database('C:/VUZ/FLP/rgz3/toys_db.pl'),
     menu.
 
-% Выполнить сохранение базы данных при завершении работы программы
+% Р’С‹РїРѕР»РЅРёС‚СЊ СЃРѕС…СЂР°РЅРµРЅРёРµ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РїСЂРё Р·Р°РІРµСЂС€РµРЅРёРё СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹
 :- at_halt(save_database('C:/VUZ/FLP/rgz3/toys_db.pl')).

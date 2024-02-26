@@ -3,7 +3,8 @@ read_file_lines(File, Lines) :-
     read_lines(Stream, Lines),
     close(Stream).
 
-% Предикат для рекурсивного чтения строк из потока
+% РџСЂРµРґРёРєР°С‚ РґР»СЏ СЂРµРєСѓСЂСЃРёРІРЅРѕРіРѕ С‡С‚РµРЅРёСЏ
+% СЃС‚СЂРѕРє РёР· РїРѕС‚РѕРєР°
 read_lines(Stream, []) :-
     at_end_of_stream(Stream).
 
@@ -12,21 +13,21 @@ read_lines(Stream, [Line | Rest]) :-
     read_line_to_string(Stream, Line),
     read_lines(Stream, Rest).
 
-% Предикат для записи строк в файл в обратном порядке
+% РџСЂРµРґРёРєР°С‚ РґР»СЏ Р·Р°РїРёСЃРё СЃС‚СЂРѕРє РІ С„Р°Р№Р» РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ
 write_reverse_lines(File, Lines) :-
     reverse(Lines, ReversedLines),
     open(File, write, Stream),
     write_lines(Stream, ReversedLines),
     close(Stream).
 
-% Предикат для рекурсивной записи строк в поток
+% РџСЂРµРґРёРєР°С‚ РґР»СЏ СЂРµРєСѓСЂСЃРёРІРЅРѕР№ Р·Р°РїРёСЃРё СЃС‚СЂРѕРє РІ РїРѕС‚РѕРє
 write_lines(_, []).
 
 write_lines(Stream, [Line | Rest]) :-
     write(Stream, Line), nl(Stream),
     write_lines(Stream, Rest).
 
-% Предикат для перестановки строк в обратном порядке
+% РџСЂРµРґРёРєР°С‚ РґР»СЏ РїРµСЂРµСЃС‚Р°РЅРѕРІРєРё СЃС‚СЂРѕРє РІ РѕР±СЂР°С‚РЅРѕРј РїРѕСЂСЏРґРєРµ
 reverse_file(InputFile, OutputFile) :-
     read_file_lines(InputFile, Lines),
     write_reverse_lines(OutputFile, Lines).
